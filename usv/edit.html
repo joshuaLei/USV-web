@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!--css stylesheet-->
+    <link rel="stylesheet" href="css/materialize.min.css">
+	<link rel='stylesheet' href="css/edit.css">
+    
+    <!--font stylesheet-->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300" rel="stylesheet">
+
+    <!--icon stylesheet-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
+	<!--JS-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+</head>
+<!-- Navbar -->
+<div class="navbar">
+	<a href="manual.html" class="title">USV_01</a>
+	<ul class="nav_L">
+		<a href="index.html">主頁</a>
+		<a href="manual.html">船隻匯總圖</a>
+	</ul>
+	<ul class="nav_R">
+		<a href="index.html">
+			<span class="fa fa-cog w3-xlarge" style="line-height:42px;"></span>
+		</a>
+		<a href="edit.html">
+			<span class="fa fa-pencil-square-o w3-xlarge" style="line-height:42px;"></span>
+		</a>
+	</ul>
+</div>
+
+<!--Side Navbar-->
+<ul class="sidenav sidenav-fixed">
+    <a href="select.html" class="a">
+		手動
+    </a>
+    <a href="select.html" class="a">
+		自動
+    </a>    
+    <a href="select.html" class="a">
+		數據
+    </a>
+</ul>
+
+<body>
+<div class="container">
+	<div class="select" id="Table">
+		<div class="top">
+			<div class="selection">
+				<div class="input-field col s12 m6">
+					<select class="icons" id="Select" onchange="select_onchange()">
+					  <option value="none" disabled selected>Choose your route</option>
+					  <option value="R1" data-icon="images/frame0.jpg">route 1</option>
+					  <option value="R2" data-icon="images/frame1.jpg">route 2</option>
+					  <option value="R3" data-icon="images/frame2.jpg">route 3</option>
+					  <option value="R4" data-icon="images/frame1.jpg">route 4</option>
+					</select>
+				  </div>
+			</div>
+			<div class="button_add">
+			<!-- Dropdown Structure -->
+			  <a class="waves-effect waves-light btn modal-trigger grey" href="#modal1" style="font-size:11.5px;">Add route</a>
+
+			  <!-- Modal Structure -->
+			  <div id="modal1" class="modal">
+				<div class="modal-content">
+				  <h4>Add new route</h4>
+				<form class="col s12">
+						<div class="row">
+						  <div class="input-field col s6">
+							<input id="input_text" type="text" data-length="10">
+							<label for="input_text">Route Name</label>
+						  </div>
+						</div>
+						<div class="row">
+						  <div class="input-field col s12">
+							<textarea id="textarea2" class="materialize-textarea" data-length="120"></textarea>
+							<label for="textarea2">Route description</label>
+						  </div>
+						</div>
+					  </form>
+				</div>
+
+				<div class="modal-footer">
+				  <a href="#!" class="modal-close waves-effect waves-grey btn-flat">Confirm</a>
+				</div>
+			  </div>
+		</div>
+		
+		<div class="button_delete">
+		  <!-- Modal Trigger -->
+		  <a class="waves-effect waves-light btn modal-trigger grey" href="#modal2">delete</a>
+
+		  <!-- Modal Structure -->
+		  <div id="modal2" class="modal">
+			<div class="modal-content">
+			  <h4>Confirm deletion</h4>
+			  <h6>You are going to delete a  route.</h6>
+			  <h6>Are you sure to delete it?</h6>
+			</div>
+			<div class="modal-footer">
+				<a href="#!" class="modal-close waves-effect waves-grey btn-flat">cancel</a>
+				<a href="#!" class="modal-close waves-effect waves-grey btn-flat">delete</a>
+			</div>
+		  </div>
+		</div>
+		
+		<div class="button_edit" id="button">
+			<div class="waves-effect waves-light btn modal-trigger blue" onclick="edit_onclick()" id="edit" style="display:none">edit<i class="material-icons right">edit</i></div>
+		</div>
+		
+		<div class="button_save" id="button">
+			<div class="waves-effect waves-light btn modal-trigger blue" onclick="edit_onclick()" id="save" style="display:none">save<i class="material-icons right">edit</i></div>
+		</div>
+		
+
+	</div>
+	<table id="actionTable">
+		<tr id=\"thead\">
+			<th>index</th> 
+			<th>Latitute</th> 
+			<th>Longitute</th> 
+			<th>action</th> 
+			<th>param</th>
+		</tr>
+	</table>
+
+</div>
+	<div id="map" class="map">
+	
+	</div>
+
+
+</div>
+
+
+
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhbAmq1dAL56A7dQZOyGWa9ceM_3XrzMM&callback=initMap"></script>
+<script>
+	var _map = null;
+	var _defaultZoom = 16;
+	
+	var _serverCenter = {lat: 22.185217, lng: 113.539797};
+	var _serverPoint = null;
+	var _clientCenter = {lat: 22.185318, lng: 113.539896};
+	var _clientPoint = null;
+	var _currentTarget = 0;
+	
+	var _serverPointColor = '#0000FF';
+	var _clientPointColor = '#00FF00';
+	var _normalPointColor = '#FF6666';
+	var _targetPointColor = '#FF0000';
+	var _finishedPointColor = '#666666';
+	
+	var _pointList = [];
+	var _lineList = [];
+
+	var _dataList = [];
+
+	var task_id = 23; 
+	var url = "./library/TaskController.php";
+	
+	var _edit_status = false;
+	var _route_status = false;
+	var _route_number = "0";
+
+	$(document).ready(function(){
+		$("#runTask").click(function(){
+			$.ajax({
+                url: url,
+                method: "post",
+                cache: false,
+                data: {
+									action: "updateExeTask",
+									task_id: task_id, 
+								}
+            });
+		});
+
+		$("#stopTask").click(function(){
+			$.ajax({
+                url: url,
+                method: "post",
+                cache: false,
+                data: {
+									action: "updateExeTask",
+									task_id: 0, 
+								}
+            });
+		});
+	});
+	
+	function initMap() {
+		var styledMapType = new google.maps.StyledMapType(
+		[
+			{
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#ebe3cd"
+			  }
+			]
+			},
+			{
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#523735"
+			  }
+			]
+			},
+			{
+			"elementType": "labels.text.stroke",
+			"stylers": [
+			  {
+				"color": "#f5f1e6"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#c9b2a6"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative.land_parcel",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#dcd2be"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative.land_parcel",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#ae9e90"
+			  }
+			]
+			},
+			{
+			"featureType": "landscape.natural",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#93817c"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"elementType": "geometry.fill",
+			"stylers": [
+			  {
+				"color": "#a5b076"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#447530"
+			  }
+			]
+			},
+			{
+			"featureType": "road",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#f5f1e6"
+			  }
+			]
+			},
+			{
+			"featureType": "road.arterial",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#fdfcf8"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#f8c967"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#e9bc62"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway.controlled_access",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#e98d58"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway.controlled_access",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#db8555"
+			  }
+			]
+			},
+			{
+			"featureType": "road.local",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#806b63"
+			  }
+			]
+			},
+			{
+			"featureType": "transit",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#8f7d77"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "labels.text.stroke",
+			"stylers": [
+			  {
+				"color": "#ebe3cd"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.station",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "water",
+			"elementType": "geometry.fill",
+			"stylers": [
+			  {
+				"color": "#b9d3c2"
+			  }
+			]
+			},
+			{
+			"featureType": "water",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#92998d"
+			  }
+			]
+			}
+		],
+		{name: 'Styled Map'});
+
+        _map = new google.maps.Map(document.getElementById('map'), {
+			center: _serverCenter,
+			zoom: _defaultZoom,
+			mapTypeControlOptions: {mapTypeIds: []},
+			disableDefaultUI: true,
+			zoomControl: true,
+			mapTypeControl: false,
+			scaleControl: true,
+			streetViewControl: false,
+			rotateControl: true,
+			fullscreenControl: true
+        });
+		_map.mapTypes.set('styled_map', styledMapType);
+		_map.setMapTypeId('styled_map');
+		
+		afterInitMap(_map);
+	}
+
+	function afterInitMap(map) {
+		_serverPoint = drawCircle(map, _serverCenter, 10, _serverPointColor, _serverPointColor);
+		_clientPoint = drawCircle(map, _clientCenter, 10, _clientPointColor, _clientPointColor);
+		
+		map.addListener('click', function(e) {
+			if (_edit_status == true){
+				newPoint = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+				radius = 6;
+				if (_pointList.length == 0) {
+					color = '#FF00FF';
+				}
+				var circle = drawCircle(this, newPoint, radius, _normalPointColor, _normalPointColor, true);
+				_pointList.push(circle);
+				
+				if (_pointList.length > 1) {
+					var line = drawLine(map, newPoint, _pointList[_pointList.length - 2].center);
+					_lineList.push(line);
+				} else {
+				
+				}
+				_dataList.push({
+					lat: circle.getCenter().lat(),
+					lng: circle.getCenter().lng(), 
+					action: "waypoint",
+					param: "",
+				});
+				drawTable();
+			}
+		});
+
+		$.ajax({
+			type: "POST",
+			url: url,
+			data: {
+				action: "readTask",
+				task_id: task_id 
+			},
+		})
+		.done(function(json){
+			console.log(json);
+			for(var i=0;i<json.length;i++){
+			  var coordinate = {lat: parseFloat(json[i].lat), lng: parseFloat(json[i].lng)};
+					var circle = drawCircle(map, coordinate, 10, _normalPointColor, _normalPointColor, true);
+					_pointList.push(circle);
+					_dataList.push({
+						lat: circle.getCenter().lat(),
+						lng: circle.getCenter().lng(), 
+						action: json[i].action,
+						param: json[i].param,
+					});
+					redrawLines(map);
+			}
+			drawTable();
+		});
+	}
+	
+	function drawCircle(map, center, radius, strokeColor, fillColor, isSearchPoint = false) {
+		var circle = new google.maps.Circle({ 
+			strokeColor: strokeColor,
+			strokeOpacity: 0.8,
+			strokeWeight: 1,
+			fillColor: fillColor,
+			fillOpacity: 0.5,
+			map: map,
+			center: center,
+			radius: radius,
+			draggable: isSearchPoint,
+			zIndex: 100
+		});
+		
+		if (isSearchPoint) {
+			circle.addListener('drag', function(e) {
+				if(_edit_status == true){
+				_serverCenter = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+				redrawLines(map, _lineList, _pointList);
+					for (var i = 0; i < _pointList.length; i++) {
+						if(_pointList[i] == this){
+							_dataList[i].lat = circle.getCenter().lat();
+							_dataList[i].lng = circle.getCenter().lng();
+							drawTable();
+
+						}
+					}
+				}
+			});
+
+			circle.addListener('rightclick', function(e) {
+				if(_edit_status == true){
+					for (var i = 1; i < _pointList.length; i++) {
+						if (_pointList[i] == this) {
+							_pointList.splice(i, 1);
+							_dataList.splice(i,1);
+							this.setMap(null);
+							redrawLines(map);
+							drawTable();
+							break;
+						}
+					}
+				}
+			});
+		}
+		
+		return circle;
+	}
+	
+	function drawLine(map, p1, p2) {
+		var line = new google.maps.Polyline({
+			path: [p1, p2],
+			geodesic: true,
+			strokeColor: _normalPointColor,
+			strokeOpacity: 1.0,
+			strokeWeight: 1
+		});
+		
+		line.addListener('rightclick', function(e) {
+			if(_edit_status == true){
+			console.log(e);
+			for (var i = 0; i < _lineList.length; i++) {
+				if (_lineList[i] == this) {
+					newPoint = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+					radius = 10;
+					color = _normalPointColor;
+
+					var circle = drawCircle(map, newPoint, radius, color, color, true);
+					_pointList.splice(i + 1, 0, circle);
+					_dataList.splice(i+1, 0, {
+							lat: circle.getCenter().lat(),
+							lng: circle.getCenter().lng(), 
+							action: "waypoint",
+							param: "",
+						});
+					break;
+				}
+			}
+			drawTable();
+			}
+		});
+
+		line.setMap(map);
+		return line;
+	}
+	
+	function redrawLines(map) {
+		for (var i = 0; i < _lineList.length; i++) {
+			_lineList[i].setMap(null);
+		}
+		_lineList = [];
+		
+		for (var i = 0; i < _pointList.length - 1; i++) {
+			var line = drawLine(map, _pointList[i].center, _pointList[i + 1].center);
+			_lineList.push(line);
+		}
+	}
+	
+	function renewTargetPointColor() {
+		isFound = false;
+		for (var i = 0; i < _pointList.length; i++) {
+			if (i == _currentTarget) {
+				_pointList[i].setOptions({
+					fillColor: _targetPointColor,
+					strokeColor: _targetPointColor
+				});
+				isFound = true;
+				
+				for (var j = 0; j < _lineList.length; j++) {
+					var color = _normalPointColor;
+					if (j < i) {
+						color = _finishedPointColor;
+					}
+					_lineList[j].setOptions({
+						strokeColor: color,
+					});
+				}
+			} else {
+				if (isFound) {
+					_pointList[i].setOptions({
+						fillColor: _normalPointColor,
+						strokeColor: _normalPointColor
+					});
+				} else {
+					_pointList[i].setOptions({
+						fillColor: _finishedPointColor,
+						strokeColor: _finishedPointColor
+					});
+				}
+				
+			}
+		}
+	}
+
+
+
+	// TODO: add saving confirming dialog
+	function saveToDB(location_json){
+		$.ajax({
+			type: "POST",
+			url: "./library/TaskController.php",
+			data: {
+				action: "saveTask",
+				task_id: task_id,
+				location_json: location_json
+			},
+		});
+	}
+
+	function drawTable(){
+		var _table = document.getElementById("actionTable");
+		_table.innerHTML = "<tr id=\"thead\"><th>index</th> <th>Latitute</th> <th>Longitute</th> <th>action</th> <th>param</th></tr>";
+		console.log(_dataList.length);
+
+		for(var i=0;i<_pointList.length;i++){
+			
+			var _row = _table.insertRow(_table.rows.length);
+			var _no = _row.insertCell(0);
+			var _GPSx = _row.insertCell(1);
+			var _GPSy = _row.insertCell(2);
+			var _action = _row.insertCell(3);
+			var _param = _row.insertCell(4);
+
+			_no.innerHTML = i;
+			_GPSx.innerHTML = _pointList[i].getCenter().lat();
+			_GPSy.innerHTML = _pointList[i].getCenter().lng();
+
+			_action.innerHTML = "<select id='"+"table-action-"+i+"'><option value=\"waypoint\">waypoint</option><option value=\"sample\">sample</option><option value=\"adjustHeight\">adjust height</option></select>";
+			var _select = document.getElementById("table-action-"+i);
+			_select.value = _dataList[i].action;
+			_select.addEventListener("change", function(){
+				_dataList[parseInt(this.id.substr(-1))].action = this.value;
+			});
+			
+			_param.innerHTML = "<input id=\"table-param-"+i+"\" type=\"text\">";
+			var _paramInput = document.getElementById("table-param-"+i);
+			_paramInput.value = _dataList[i].param;
+			_paramInput.addEventListener("change", function(){
+				_dataList[parseInt(this.id.substr(-1))].param = this.value;
+			});
+
+		}
+
+
+	}
+
+	function loadMissionFromDB(jsonFromDB){
+		// load data to _dataList[] and call drawTable()
+		console.log(jsonFromDB);
+
+		// draw points on map
+	}
+
+	function fetchJsonViaPhpViaAjax(path){
+		var httpRequest = new XMLHttpRequest();
+	    httpRequest.onreadystatechange = function() {
+	        if (httpRequest.readyState === 4 || httpRequest.readyState === 0) {
+	            if (httpRequest.status === 200) {
+	                var responseText = httpRequest.responseText;
+	                console.log(responseText);
+	                return responseText;
+	            }
+	        }
+	    };
+	    httpRequest.open('GET', path);
+	    httpRequest.send();
+	}
+
+	  function edit_onclick() {
+		  var e = document.getElementById('edit');
+		  var s = document.getElementById('save');
+		  if (s.style.display === 'none') {
+			e.style.display = 'none';
+			s.style.display = 'block';
+			_edit_status = true;
+			console.log(_edit_status);
+			
+			for (var i = 0; i < _pointList.length; i++){
+				_pointList[i].draggable = true;
+			}
+		  } else{
+			e.style.display = 'block';
+			s.style.display = 'none';
+			_edit_status = false;
+			console.log(_edit_status);
+			
+			for (var i = 0; i < _pointList.length; i++){
+				_pointList[i].draggable = false;
+			}			
+		  } 
+	  }
+	  
+	  function select_onchange(){
+		_route_number = document.getElementById("Select").value;
+		  var e = document.getElementById('edit');
+		  var s = document.getElementById('save');
+		  if (_route_status == false) {
+			e.style.display = 'block';
+			s.style.display = 'none';
+		  } else{
+			e.style.display = 'none';
+			s.style.display = 'none';	
+		  } 
+		console.log(_route_number);
+
+	  }
+
+
+	
+	setInterval(function() {
+		renewTargetPointColor();
+	}, 100);
+	
+	
+</script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/startup-all-min.js?1562428897692819497" crossorigin="anonymous"></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		var elems = document.querySelectorAll('select');
+		var instances = M.FormSelect.init(elems, options);
+	  });
+	document.addEventListener('DOMContentLoaded', function() {
+		var elems = document.querySelectorAll('.modal');
+		var instances = M.Modal.init(elems, options);
+	});
+	document.addEventListener('DOMContentLoaded', function() {
+		var elems = document.querySelectorAll('.modal');
+		var instances = M.Modal.init(elems, options);
+	});
+</script>
+
+
+</body>
+</html>
+</html>

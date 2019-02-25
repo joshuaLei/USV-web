@@ -1,0 +1,121 @@
+body{
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.container{
+	left: -200px;
+	top: 70px;
+	width:400px;
+	height:550px;
+	margin-left:50%;
+	border-radius:10px;
+	padding: 10px 10px 10px 10px;
+	background-color: rgb(110,110,110);
+	opacity:0.7;
+	position:absolute;
+}
+.selectbutton a{
+	top:70px;
+	left:50px;
+	width: 35px;
+	height:50px;
+	position:absolute;
+	
+}
+.form{
+	top:0px;
+	left:0px;
+	width:400px;
+	height:900px;
+	position:absolute;
+}
+
+form i{
+	left: 200px;
+	top: 337px;
+	width: 40px;
+	height:20px;
+}
+
+.iconContainer{
+	width:380px;
+	height:80px;
+	border-radius:10px;
+	padding-top: 25px;
+	text-align: center;
+	position:relative;
+}
+
+.iconContainer span{
+	font-size:30px;
+}
+
+.selectContainer{
+	width:380px;
+	height:430px;
+	border-radius:10px;
+	position:relative;
+}
+
+.selectusv{
+	width:190px;
+	height:300px;
+	border-radius:10px;
+	padding: 10px 15px 10px 15px;
+	position:absolute;
+}
+
+.selectroute{
+	left:190px;
+	width:190px;
+	height:300px;
+	border-radius:10px;
+	padding: 10px 10px 10px 10px;
+	position:absolute;
+}
+.selectbutton{
+	top:270px;
+	width:380px;
+	height:150px;
+	text-align:center;
+	border-radius:10px;
+	padding: 10px 10px 10px 10px;
+	position:absolute;
+}
+.footerContainer{
+	top:520px;
+	width:380px;
+	height:30px;
+	text-align: center;
+	font-size: 12px;
+	position:absolute;
+}
+
+.input-field{
+	margin-top:0px;
+	margin-bottom:0px;
+	line-height: 3;
+}
+
+.selectbutton .switch{
+	padding-top: 0px;
+	padding-bottom: 20px;
+}
+
+.selectbutton a{
+	margin-left:35px;
+	margin-right:35px;
+}
+
+.waves-button-input{
+	width: 100px;
+    height: 50px;
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+	line-height:0px;
+}
+
+
+

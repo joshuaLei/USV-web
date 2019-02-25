@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body{
+    padding:20px;
+    margin-top:0px;
+    background-color: #eee;
+    height:600px;
+    font-family: "Lato", sans-serif;
+    color:black;
+}
+
+.sidenav{
+    width: 85px;
+	height: 100%;
+    background-color:rgb(255, 255, 255);
+}
+.sidenav a {
+	width: 85px;
+}
+
+#container { 
+	width: 100%;
+	height: 100%;
+	position: absolute; 
+	left: 0px;
+	top: 0px;
+}
+
+#map {
+    left:87px;
+    top: 0;
+    width:50%;
+    height: 650px;
+    position: absolute;
+}
+
+div.rotate-text {
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+.frame {
+	position: absolute;
+    left: 51.6%;
+    width: 348px;
+	border: solid 2px #bbb;
+	padding: 5px;
+	margin-top: 5px;
+	margin-left: 70px;
+	background-color: #fff;
+}
+.frame div { 
+	width: 150px;
+	font-size: 20px;
+	color: #000;
+	position: absolute;
+	left: -65px;
+	top: 100px;
+}
+.frame img {
+    width:320px;
+    height:240px;
+	margin-left: 15px;
+}
+#frame1 { top: 0px; }
+#frame2 { top: 255px; }
+#frame3 { top: 510px; }
+
+#button_list {
+	width: 50%;
+	height: 117px;
+	position: absolute;
+	top: 650px;
+	left: 110px;
+}
+.button_list_item {
+    width:60px;
+    height:70px;
+	margin: 12px 25px 0px 23px;
+	float: left;
+	color: #666;
+}
+#SensorContain {
+	position: absolute;
+    left: 80%;
+    width: 280px;
+    height:760px;
+	border: solid 2px #bbb;
+	margin-top: 5px;
+	margin-left: 5px;
+	background-color: #fff;
+}
+.sensor {
+    width: 250px;
+    height: 20px;
+	margin: 20px 0px 0px 20px;
+	color: #666;
+}
+.value{
+	font-size:20px;
+}
+.material-icons{
+    display: inline-flex;
+    vertical-align: top;
+}
+.box{
+    left: 81.5%;
+    top: 83%;
+    width: 200px;
+    height: 60px;
+	  position: relative;
+}
+
+#lefttop{
+	left: 10%;
+	top: 55%;
+    width: 20px;
+    height: 20px;
+	background-color: rgb(255, 255, 0);
+	position: absolute;
+}
+#righttop{
+	left: 100%;
+	top: 55%;
+    width: 20px;
+    height: 20px;
+	background-color: rgb(255, 0, 0);
+	position: absolute;
+}
+
+#leftdown{
+	left: 10%;
+	top: 115%;
+    width: 20px;
+    height: 20px;
+	background-color: rgb(0, 255, 0);
+	position: absolute;
+}
+
+#rightdown{
+	left: 100%;
+	top: 115%;
+  width: 20px;
+  height: 20px;
+	background-color: rgb(0, 0, 255);
+	position: absolute;
+}
+
+
+</style>
+
+<body>
+<ul id="slide-out" class="sidenav sidenav-fixed">
+  <a href="#" class="w3-bar-item w3-button w3-padding-large w3-light-grey">
+		<i class="fa fa-home w3-xxlarge"></i>
+		<p>Home</p>
+	</a>
+	<a href="USV_UI_Camera.html" class="w3-bar-item w3-button w3-padding-large w3-light-grey">
+		<i class="fa fa-map-o w3-xxlarge"></i>
+		<p>View</p>
+	</a>
+	<a href="#" class="w3-bar-item w3-button w3-padding-large w3-light-grey">
+		<i class="fa fa-tachometer w3-xxlarge"></i>
+		<p style="margin-left: -5px;">Control</p>
+	</a>
+	<a href="#" class="w3-bar-item w3-button w3-padding-large w3-light-grey">
+		<i class="fa fa-bar-chart w3-xxlarge"></i>
+		<p style="margin-left: -5px;">Others</p>
+	</a>
+</ul>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+var light = false;
+var alarm = false;
+var speaker = false;
+var start = false;
+var stop = false;
+
+function refresh() {
+    var frame1 = document.getElementById("camera1");
+    var frame2 = document.getElementById("camera2");
+    var frame3 = document.getElementById("camera3");
+    frame1.src = "images/frame0.jpg?r=" + Math.random();
+    frame2.src = "images/frame1.jpg?r=" + Math.random();
+    frame3.src = "images/frame2.jpg?r=" + Math.random();
+}
+setInterval(refresh, 100);
+function onclick_light(event) {
+	light = !light;
+	$.ajax(
+    {
+    url: 'USV_UI_update.php',
+    method: 'GET',
+    data: {light: light, alarm: alarm, speaker: speaker, start: start, stop: stop},
+    async: false,
+    complete: function (response) 
+        {
+        console.log('light:', light, 'alarm:', alarm, 'speaker:', speaker, 'start:', start, 'stop:', stop);
+        console.log(response);
+        }
+    });
+}
+function onclick_alarm(event) {
+	alarm = !alarm;
+	$.ajax(
+    {
+    url: 'USV_UI_update.php',
+    method: 'GET',
+    data: {light: light, alarm: alarm, speaker: speaker, start: start, stop: stop},
+    async: false,
+    complete: function (response) 
+        {
+        console.log('light:', light, 'alarm:', alarm, 'speaker:', speaker, 'start:', start, 'stop:', stop);
+        console.log(response);
+        }
+    });
+}
+function onclick_speaker(event) {
+	spaeker = !speaker;
+	$.ajax(
+    {
+    url: 'USV_UI_update.php',
+    method: 'GET',
+    data: {light: light, alarm: alarm, speaker: speaker, start: start, stop: stop},
+    async: false,
+    complete: function (response) 
+        {
+        console.log('light:', light, 'alarm:', alarm, 'speaker:', speaker, 'start:', start, 'stop:', stop);
+        console.log(response);
+        }
+    });
+}
+function onclick_start(event) {
+	start = !start;
+	$.ajax(
+    {
+    url: 'USV_UI_update.php',
+    method: 'GET',
+    data: {light: light, alarm: alarm, speaker: speaker, start: start, stop: stop},
+    async: false,
+    complete: function (response) 
+        {
+        console.log('light:', light, 'alarm:', alarm, 'speaker:', speaker, 'start:', start, 'stop:', stop);
+        console.log(response);
+        }
+    });
+}
+function onclick_stop(event) {
+	stop = !stop;
+	$.ajax(
+    {
+    url: 'USV_UI_update.php',
+    method: 'GET',
+    data: {light: light, alarm: alarm, speaker: speaker, start: start, stop: stop},
+    async: false,
+    complete: function (response) 
+        {
+        console.log('light:', light, 'alarm:', alarm, 'speaker:', speaker, 'start:', start, 'stop:', stop);
+        console.log(response);
+        }
+    });
+}
+</script>
+<div id="container">
+<div class="frame" id="frame1">
+	<div class="rotate-text">Center camera</div>
+    <img class="materialboxed" id="camera1" alt="Please check your connection"/>
+</div>
+<div class="frame" id="frame2">
+	<div class="rotate-text">Left camera</div>
+    <img class="materialboxed" id="camera2" alt="Please check your connection"/>
+</div>
+<div class="frame" id="frame3">
+	<div class="rotate-text">Right camera</div>
+    <img class="materialboxed" id="camera3" alt="Please check your connection"/>
+</div>
+
+
+<div id="button_list">
+<div class="button_list_item">
+    <i class="material-icons medium gray-text"><a href="#" onclick="onclick_light(event)">highlight</a></i>
+    <h8><center>Light</center></h8>
+</div>
+<div class="button_list_item">
+    <a href="#" onclick="onclick_alarm(event)"><i class="material-icons medium gray-text">alarm_on</i></a>
+    <h8><center>Alarm</center></h8>
+</div>
+<div class="button_list_item">
+    <a href="#" onclick="onclick_speaker(event)"><i class="material-icons medium gray-text">volume_up</i></a>
+    <h8><center>Speaker</center></h8>
+</div>
+<div class="button_list_item">
+    <a href="#" onclick="onclick_start(event)"><i class="material-icons medium gray-text">slideshow</i></a>
+    <h8><center>Start</center></h8>
+</div>
+<div class="button_list_item">
+    <a href="#"><i class="material-icons medium gray-text">stop</i></a>
+    <h8><center>...</center></h8>
+</div>
+<div class="button_list_item">
+    <a href="#" onclick="onclick_stop(event)"><i class="material-icons medium red-text">highlight_off</i></a>
+    <h8><center>Stop</center></h8>
+</div>
+</div>
+
+
+<div id="SensorContain">
+<div class="sensor">
+	<i class="material-icons small gray-text">visibility</i><span class="value" id="sensor1" style="margin-left:5px"></span>
+</div>
+<div class="sensor">
+	<i class="material-icons small gray-text">visibility</i><span class="value" id="sensor2" style="margin-left:5px"></span>
+</div>
+<div class="sensor">
+	<i class="material-icons small gray-text">visibility</i><span class="value" id="sensor3" style="margin-left:5px"></span>
+</div>
+<div class="sensor">
+	<i class="material-icons small gray-text">visibility</i><span class="value" id="sensor4" style="margin-left:5px"></span>
+</div>
+<div class="sensor">
+	<i class="material-icons small gray-text">gps_fixed</i><span class="value" id="gpsX" style="margin-left:5px"></span>
+</div>
+<div class="sensor">
+	<i class="material-icons small gray-text">gps_fixed</i><span class="value" id="gpsY" style="margin-left:5px"></span>
+</div>
+</div>
+
+<div class="box">
+	<img src="img/boat2.jpg" id="boatpic" width="252" height="120">
+	<div id="lefttop"></div>
+	<div id="righttop"></div>
+	<div id="leftdown"></div>
+	<div id="rightdown"></div>		
+</div>
+
+<div id="map"></div>
+</div>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhbAmq1dAL56A7dQZOyGWa9ceM_3XrzMM&callback=initMap"></script>
+<script>
+	var _ultra1 = 0;
+	var _ultra2 = 0;
+	var _ultra3 = 0;
+	var _ultra4 = 0;
+	var _ultra5 = 0;
+	var _ultra6 = 0;
+
+	var _map = null;
+	var _defaultZoom = 17;
+	
+	var _serverCenter = {lat: 22.202, lng: 113.559};
+	var _serverPoint = null;
+	var _clientCenter = {lat: 22.202, lng: 113.559};
+	var _clientPoint = {lat: 22.202, lng: 113.559};
+	var _currentTarget = 0;
+	
+	var _serverPointColor = '#0000FF';
+	var _clientPointColor = '#00FFFF';
+	var _normalPointColor = '#FF6666';
+	var _targetPointColor = '#FF0000';
+	var _finishedPointColor = '#666666';
+	
+	var _pointList = [];
+	var _lineList = [];
+	
+	var infowindow = null; 
+	var displayIndex = 0;
+	var _groupIndex = 0;
+	var _from = '<?= $from ?>';
+	var _to = '<?= $to ?>';
+	function initMap() {
+		var styledMapType = new google.maps.StyledMapType(
+		[
+			{
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#ebe3cd"
+			  }
+			]
+			},
+			{
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#523735"
+			  }
+			]
+			},
+			{
+			"elementType": "labels.text.stroke",
+			"stylers": [
+			  {
+				"color": "#f5f1e6"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#c9b2a6"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative.land_parcel",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#dcd2be"
+			  }
+			]
+			},
+			{
+			"featureType": "administrative.land_parcel",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#ae9e90"
+			  }
+			]
+			},
+			{
+			"featureType": "landscape.natural",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "poi",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#93817c"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"elementType": "geometry.fill",
+			"stylers": [
+			  {
+				"color": "#a5b076"
+			  }
+			]
+			},
+			{
+			"featureType": "poi.park",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#447530"
+			  }
+			]
+			},
+			{
+			"featureType": "road",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#f5f1e6"
+			  }
+			]
+			},
+			{
+			"featureType": "road.arterial",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#fdfcf8"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#f8c967"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#e9bc62"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway.controlled_access",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#e98d58"
+			  }
+			]
+			},
+			{
+			"featureType": "road.highway.controlled_access",
+			"elementType": "geometry.stroke",
+			"stylers": [
+			  {
+				"color": "#db8555"
+			  }
+			]
+			},
+			{
+			"featureType": "road.local",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#806b63"
+			  }
+			]
+			},
+			{
+			"featureType": "transit",
+			"stylers": [
+			  {
+				"visibility": "off"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#8f7d77"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.line",
+			"elementType": "labels.text.stroke",
+			"stylers": [
+			  {
+				"color": "#ebe3cd"
+			  }
+			]
+			},
+			{
+			"featureType": "transit.station",
+			"elementType": "geometry",
+			"stylers": [
+			  {
+				"color": "#dfd2ae"
+			  }
+			]
+			},
+			{
+			"featureType": "water",
+			"elementType": "geometry.fill",
+			"stylers": [
+			  {
+				"color": "#b9d3c2"
+			  }
+			]
+			},
+			{
+			"featureType": "water",
+			"elementType": "labels.text.fill",
+			"stylers": [
+			  {
+				"color": "#92998d"
+			  }
+			]
+			}
+		],
+		{name: 'Styled Map'});
+
+        _map = new google.maps.Map(document.getElementById('map'), {
+			center: _serverCenter,
+			zoom: _defaultZoom,
+			mapTypeControlOptions: {mapTypeIds: []},
+			disableDefaultUI: true,
+			zoomControl: true,
+			mapTypeControl: false,
+			scaleControl: true,
+			streetViewControl: false,
+			rotateControl: true,
+			fullscreenControl: true
+        });
+		_map.mapTypes.set('styled_map', styledMapType);
+		_map.setMapTypeId('styled_map');
+		
+		console.log(_clientCenter);
+		//drawCircle(_map, _clientCenter, 10, _clientPointColor, _clientPointColor);
+		setTimeout(refresh, 1000);
+	}
+	function refresh() {
+		$.ajax(
+		{
+			url: 'USV_GPS_get.php',
+			method: 'GET',
+			data: {},
+			complete: function (response) 
+			{
+				var X = response.responseJSON[6]['value'];
+				var Y = response.responseJSON[7]['value'];
+				_clientCenter = {lat: parseFloat(X), lng: parseFloat(Y)};
+				_clientPoint = {lat: parseFloat(X), lng: parseFloat(Y)};
+				document.getElementById("gpsX").innerHTML = 'GpsX: '+ X;
+				document.getElementById("gpsY").innerHTML = 'GpsY: '+ Y;
+				console.log(_clientCenter);
+				drawCircle(_map, _clientCenter, 40, _clientPointColor, _clientPointColor);
+				setTimeout(refresh, 1000);
+			}
+		});
+	}
+	function removeAllPoints() {
+		for (var i = 0; i < _pointList.length; i++) {
+			_pointList[i].setMap(null);
+		}
+		_pointList = [];
+	}
+	
+	function drawCircle(map, center, radius, strokeColor, fillColor, isSearchPoint = false) {
+		var circle = new google.maps.Circle({
+			strokeColor: strokeColor,
+			strokeOpacity: 0.8,
+			strokeWeight: 1,
+			fillColor: fillColor,
+			fillOpacity: 0.5,
+			map: map,
+			center: center,
+			radius: radius,
+			draggable: isSearchPoint,
+			zIndex: 100
+		});
+		
+		if (isSearchPoint) {
+			circle.addListener('drag', function(e) {
+				_serverCenter = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+				redrawLines(map, _lineList, _pointList);
+			});
+			
+			circle.addListener('rightclick', function(e) {
+				for (var i = 1; i < _pointList.length; i++) {
+					if (_pointList[i] == this) {
+						_pointList.splice(i, 1);
+						this.setMap(null);
+						redrawLines(map);
+						break;
+					}
+				}
+			});
+		}
+		
+		circle.addListener('click', function(e) {
+			console.log('click');
+			infowindow.setPosition(e.latLng);
+			infowindow.open(map);
+			console.log(circle.data);
+			html = '';
+			if (displayIndex == 0 || displayIndex == 1)
+				html += '<p>temp: ' + circle.data.temp + '</p>';
+			if (displayIndex == 0 || displayIndex == 2)
+			html += '<p>pH: ' + circle.data.pH + '</p>';
+			if (displayIndex == 0 || displayIndex == 3)
+				html += '<p>DO: ' + circle.data.do + '</p>';
+			if (displayIndex == 0 || displayIndex == 4)
+				html += '<p>Conduct: ' + circle.data.conduct + '</p>';
+			infowindow.setContent(html);
+		});
+		
+		return circle;
+	}
+	
+	function drawLine(map, p1, p2) {
+		var line = new google.maps.Polyline({
+			path: [p1, p2],
+			geodesic: true,
+			strokeColor: _normalPointColor,
+			strokeOpacity: 1.0,
+			strokeWeight: 1
+		});
+		
+		line.addListener('rightclick', function(e) {
+			console.log(e);
+			for (var i = 0; i < _lineList.length; i++) {
+				if (_lineList[i] == this) {
+					newPoint = {lat: e.latLng.lat(), lng: e.latLng.lng()};
+					radius = 10;
+					color = _normalPointColor;
+
+					var circle = drawCircle(map, newPoint, radius, color, color, true);
+					_pointList.splice(i + 1, 0, circle);
+					break;
+				}
+			}
+		});
+
+		line.setMap(map);
+		return line;
+	}
+	
+	function redrawLines(map) {
+		for (var i = 0; i < _lineList.length; i++) {
+			_lineList[i].setMap(null);
+		}
+		_lineList = [];
+		
+		for (var i = 0; i < _pointList.length - 1; i++) {
+			var line = drawLine(map, _pointList[i].center, _pointList[i + 1].center);
+			_lineList.push(line);
+		}
+	}
+	
+	function renewTargetPointColor() {
+		isFound = false;
+		for (var i = 0; i < _pointList.length; i++) {
+			if (i == _currentTarget) {
+				_pointList[i].setOptions({
+					fillColor: _targetPointColor,
+					strokeColor: _targetPointColor
+				});
+				isFound = true;
+				
+				for (var j = 0; j < _lineList.length; j++) {
+					var color = _normalPointColor;
+					if (j < i) {
+						color = _finishedPointColor;
+					}
+					_lineList[j].setOptions({
+						strokeColor: color,
+					});
+				}
+			} else {
+				if (isFound) {
+					_pointList[i].setOptions({
+						fillColor: _normalPointColor,
+						strokeColor: _normalPointColor
+					});
+				} else {
+					_pointList[i].setOptions({
+						fillColor: _finishedPointColor,
+						strokeColor: _finishedPointColor
+					});
+				}
+				
+			}
+		}
+	}
+	function ultraRefresh() {
+		$.ajax(
+		{
+			url: 'USV_ULTRA_get.php',
+			method: 'GET',
+			data: {},
+			complete: function (response) 
+			{
+				_ultra1 = response.responseJSON[0]['value'];
+				_ultra2 = response.responseJSON[1]['value'];
+				_ultra3 = response.responseJSON[2]['value'];
+				_ultra4 = response.responseJSON[3]['value'];
+				document.getElementById("sensor1").innerHTML = '1ultra: '+ _ultra1 + 'cm';
+				document.getElementById("sensor2").innerHTML = '2ultra: '+ _ultra2 + 'cm';
+				document.getElementById("sensor3").innerHTML = '3ultra: '+ _ultra3 + 'cm';
+				document.getElementById("sensor4").innerHTML = '4ultra: '+ _ultra4 + 'cm';
+				console.log('1sensor:' + _ultra1);
+				console.log('2sensor:' + _ultra2);
+				console.log('3sensor:' + _ultra3);
+				console.log('4sensor:' + _ultra4);
+				setTimeout(ultraRefresh, 10);
+				changeColor("leftdown", _ultra1);
+				changeColor("lefttop", _ultra2);
+				changeColor("rightdown", _ultra3);
+				changeColor("righttop", _ultra4);
+			}
+		});
+	}
+	function changeColor(id, value){
+		var sensorid = document.getElementById(id);
+		/*
+		if (value < 70) {
+			sensorid.style["background-color"] = "rgb(255, 0, 0)";
+		}
+		else if (value < 200) {
+			var U1 = document.getElementById(id);
+			sensorid.style["background-color"] = "rgb(255, 255, 0)";
+		}
+		else if (value < 3000) {
+			var U1 = document.getElementById(id);
+			sensorid.style["background-color"] = "rgb(0, 255, 0)";
+		}
+		*/
+		var R = 255 - Math.max(Math.min(value, 100), 0);
+		var G = Math.max(Math.min(value, 255), 0);
+		var B = 0;
+		sensorid.style["background-color"] = "rgb(" + R + ", " + G + ", " + B + ")";
+	}
+ultraRefresh()
+		
+</script>
+
+
+<script type="text/javascript" src="js/materialize.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    //var instances = M.Sidenav.init(elems, options);
+  });
+</script>
+</body>
+</html>

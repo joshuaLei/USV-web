@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PCMS USV Team</title>
+
+    <!-- Stylesheet -->
+    <link href="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/startup-materialize.min.css?7242567610840524782" rel="stylesheet">
+    <link rel="canonical" href="https://themes.materializecss.com/pages/startup-horizontal-half.html">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC:300" rel="stylesheet">
+    <link rel="stylesheet" href="css/materialize.min.css">
+    
+    
+    <!-- Material Icons -->
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <link rel='stylesheet' href="css/select.css">
+    
+</head>
+
+
+
+  <body>
+
+    <!-- Navbar -->
+    <nav class="n bi fj">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo"><i class="icon-diamond blacke-text"></i></a>
+        <ul id="nav-mobile" class="ag hide-on-med-and-down">
+          <li><a href="index.html">主頁</a></li>
+          <li><a href="control.html">控制台</a></li>
+          <!--<li><a href="settings.html"><i class='fas fa-cog' style='font-size:20px;color:black'></i></a></li>-->
+        </ul>
+        
+      </div>
+    </nav>
+	<div class="bz">
+		<img src="img/Select_bg.png" alt="">
+	</div>
+	<div class="container">
+		<div class="iconContainer">
+			<span>PCMS USV</span>
+		</div>
+		<div class="selectContainer">
+		<form class="form" action="control.php" method="get">
+			<div class="selectusv">
+				<div class="input-field col s12">
+					<select class="selection" id="usv_value" name="usv">
+					  <option value="" disabled selected style="line-height: 1;">Choose your USV</option>
+					  <option value="1">USV 1</option>
+					  <option value="2">USV 2</option>
+					  <option value="3">GEKYUME</option>
+					  <option value="4">USV 4</option>
+					</select>
+				</div>
+			</div>
+			<div class="selectroute">
+			  <div class="input-field col s12 m6">
+				<select class="icons" id="usv_route" name="route">
+				  <option value="" disabled selected>Choose your route</option>
+				  <option value="R1" data-icon="images/frame0.jpg">route 1</option>
+				  <option value="R2" data-icon="images/frame1.jpg">route 2</option>
+				  <option value="R3" data-icon="images/frame2.jpg">route 3</option>
+				  <option value="R4" data-icon="images/frame1.jpg">route 4</option>
+				</select>
+			  </div>
+			</div>
+			<div class="selectbutton">
+				  <div class="switch">
+					<label style="color: rgb(240,240,240); font-size:20px;">
+					  Manual
+					  <input type="checkbox" onclick="mode_onclick()">
+					  <span class="lever"></span>
+					  Auto
+					</label>
+				  </div>
+				<a href="index.html" class="waves-effect waves-light btn-large grey">返回</a>
+				<input hidden name="mode" id="mode" value="manual">
+			</div>
+			<input type="submit" class="waves-effect waves-light btn-large teal waves-input-wrapper" style="width: 100px; height: 56px; padding-left: 0px; padding-right: 0px;" >		
+		</form>
+		</div>
+
+		<div class="footerContainer">
+			<span>&copy2018 made with love by PCMS USV<span>
+		</div>
+	</div>
+
+     <!-- Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="//cdn.shopify.com/s/files/1/1775/8583/t/1/assets/startup-all-min.js?1562428897692819497" crossorigin="anonymous"></script>
+<script>
+	var _mode = 'manual';
+	document.addEventListener('DOMContentLoaded', function() {
+		var elems = document.querySelectorAll('select');
+		var instances = M.FormSelect.init(elems, options);
+	});
+	function mode_onclick(){
+		if (_mode == 'manual' ){
+			_mode = 'auto';
+		} else{
+			_mode = 'manual';			
+		}
+		document.getElementById("mode").value = _mode;		
+	}
+	
+</script>
+  </body>
+</html>

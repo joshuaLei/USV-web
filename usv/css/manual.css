@@ -1,0 +1,287 @@
+body{
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.container{
+	left: -590px;
+	top: 48px;
+	width:1230px;
+	height:630px;
+	margin-left:50%;
+	padding-top: 10px;
+	padding-left: 10px;
+	padding-right: 5px;
+	padding-bottom: 10px;
+	position:absolute;
+
+}
+.navbar {
+	width: auto;
+	height: 48px;
+	background-color:rgb(37,41,46);
+	position: relative;
+}
+.navbar a { 
+	margin-left: 0px; 
+}
+ul.nav_L a {
+	display: block; 
+	width: 100px;
+	height: 48px;
+	float: left;
+	text-align: center;
+}
+ul.nav_R a {
+	display: block; 
+	width: 60px;
+	height: 48px;
+	float: right;
+	text-align: center;
+}
+
+
+ul.nav_L a:hover {
+	background-color: rgb(17,21,26);
+}
+
+ul.nav_R a:hover {
+	background-color: rgb(17,21,26);
+}
+
+.nav_L{
+	line-height: 48px;
+	margin: 0;
+	position: absolute;
+    color:rgb(190,191,191);
+}
+ul.nav_L { padding-left: 50px; }
+
+.nav_R{
+	line-height: 48px;
+	margin: 0;
+    color:rgb(190,191,191);
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+ul.nav_R { padding-right: 0px; }
+
+.navbar .title{
+    position: absolute;
+	left: 50%;
+	top: 0px;
+	width: 150px;
+	margin-left: -75px;
+	text-align: center;
+	line-height: 48px;
+	font-size: 24px;
+    background: transparent;
+    color:rgb(190,191,191);
+}
+.material-icons{
+    display: inline-flex;
+    vertical-align: top;
+}
+
+
+.sidenav{
+    width: 50px;
+	height: 100%;
+    background-color:rgb(37,41,46);
+    font-size:15px;
+    padding-top:50px;
+    position:relative;
+}
+
+.sidenav a {
+	display: block;
+	width: 50px;
+	height: 65px;
+	float: right;
+	text-align: center;
+	line-height: 60px;
+    color:rgb(190,191,191);
+}
+
+.sidenav a:hover{
+	background-color: rgb(17,21,26);
+}
+
+.map{
+	top: 10px;
+	height: 620px;
+	width: 630px;
+  	border: 1px solid rgb(230,230,230);
+  	position:absolute;
+}
+
+
+.USV_img{
+    left: 20px;
+    bottom: 30px;
+    width: 150px;
+    height: 80px;
+    z-index: 1;
+	position: absolute;
+}
+
+#lefttop{
+	left: 1%;
+	top: 5%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+	background-color: rgb(255, 255, 0);
+	position: absolute;
+}
+#righttop{
+	left: 86%;
+	top: 5%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+	background-color: rgb(255, 0, 0);
+	position: absolute;
+}
+
+#leftdown{
+	left: 1%;
+	top: 70%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+	background-color: rgb(0, 255, 0);
+	position: absolute;
+}
+
+#rightdown{
+	left: 86%;
+	top: 70%;
+  	width: 20px;
+  	height: 20px;
+    border-radius: 50%;
+	background-color: rgb(0, 0, 255);
+	position: absolute;
+}
+
+.images{
+	right:0px;
+	height:410px;
+  	width: 580px;
+  	position: absolute;
+}
+.images img {
+    width:280px;
+    height:190px;
+}
+.materialboxed{
+  	border: 1px solid rgb(200,200,200);
+}
+
+#frame1 { 
+	top: 0px; 
+	left: 0px;
+	position: absolute; 
+}
+#frame2 { 
+	top: 0px; 
+	left:290px;
+	position: absolute; 
+}
+#frame3 {
+	top: 200px; 
+	left:0px;	
+	position: absolute; 
+
+}
+#frame4 {
+	top: 200px; 
+	left:290px;	
+	position: absolute; 
+
+}
+.control_panel{
+	right:5px;
+	bottom: 0px;
+	width: 575px;
+	height: 220px;
+  	border: 1px solid rgb(200,200,200);
+	position: absolute;
+}
+.joystick{
+	left: 10px;
+	top: 10px;
+	width:160px;
+	height:200px;
+    background-color:rgb(235,235,235);
+    position: absolute;
+}
+.button_top {
+	left: 180px;
+	top: 10px;
+	width:225px;
+	height:95px;
+    background-color:rgb(235,235,235);
+    position: absolute;
+}
+.button_bottom {
+	left: 180px;
+	top: 115px;
+	width:225px;
+	height:95px;
+    background-color:rgb(235,235,235);
+    position: absolute;
+}
+
+.button_list_item {
+	padding-top:20px;
+	float: left;
+	text-align:center;
+	display: block;
+	width: 75px;
+	height: 95px;
+    color: #666;
+}
+.button_list_item:hover {
+	background-color: rgb(245,245,245);
+}
+
+.sensor_value {
+	left: 415px;
+	top: 10px;
+	width:150px;
+	height:200px;
+    background-color:rgb(240,240,240);
+    position: absolute;
+}
+
+.sensor {
+    width: 250px;
+    height: 20px;
+	margin: 5.5px 0px 0px 8px;
+	color: #666;
+}
+
+
+#joystickContent{
+    left: 5px;
+    top: 0px;
+    width:160px;
+    height:160px;
+    position:absolute;
+}
+
+.joysitckSpeed{
+	padding-left:12px;
+	margin-top:160px;
+    width: 160px;
+    height: 20px;
+	color: #666;
+}
+#XandY_div{
+    left: 90px;
+    top: -100px;
+    width:100px;
+    height:10px;
+    position: absolute;
+}
